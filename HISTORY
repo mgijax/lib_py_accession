@@ -1,0 +1,6 @@
+TAG: lib_py_accession-1-0-1
+DATE: 02/04/2004
+STAFF: jsb
+RELEASE: alpha
+CHANGES:
+1) updated 'species' to be 'organism' as we switch to MGI_Organism table
