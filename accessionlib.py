@@ -102,10 +102,17 @@ def set_sqlFunction (fn):
 # Exceptions
 # ==========
 
-NoLogicalDBforSpecies = "No Logical Database for Species key:"
-MultLogicalDBsforSpecies = "Multiple Logical Databases for Species key:"
-NoActualDBforSpecies = "No Actual Database for Species key:"
-MultActualDBsforSpecies = "Multiple Actual Databases for Species key:"
+NoLogicalDBforOrganism = "No Logical Database for Organism key:"
+MultLogicalDBsforOrganism = "Multiple Logical Databases for Organism key:"
+NoActualDBforOrganism = "No Actual Database for Organism key:"
+MultActualDBsforOrganism = "Multiple Actual Databases for Organism key:"
+
+# aliases maintained for backward compatability
+
+NoLogicalDBforSpecies = NoLogicalDBforOrganism
+MultLogicalDBsforSpecies = MultLogicalDBsforOrganism
+NoActualDBforSpecies = NoActualDBforOrganism
+MultActualDBsforSpecies = MultActualDBsforOrganism
 
 
 # Classes
@@ -116,22 +123,23 @@ class LogicalDB:
 	A "Logical Database" in MGI. Corresponds to the entries in the 
     ACC_LogicalDB table in the MGI database.
 	"""
-	def __init__(self, logicaldbname, logicaldbkey, description, specieskey):
+	def __init__(self, logicaldbname, logicaldbkey, description, 
+			organismkey):
 		""" constructor
 		# requires: 
 		#    logicaldbname: name of the LogicalDB (string).
 		#    logicaldbkey: primary key/identifier of the logicaldb (integer).
 		#    description: textual description of the logicaldb (string).
-		#    specieskey: integer key representing the species that this
-		#                logical database is associated with (primary key of
-		#                MRK_Species table).
+		#    organismkey: integer key representing the organism that
+		#		this logical database is associated with
+		#		(primary key of MGI_Organism table).
 		# effects: initializes object with provided parameters. 
 		# exceptions: none
 		"""
 		self.name = logicaldbname
 		self.key = logicaldbkey
 		self.description = description
-		self.specieskey = specieskey
+		self.organismkey = organismkey
 
 	def getName(self):
 		"""
@@ -161,14 +169,19 @@ class LogicalDB:
 		"""
 		return self.description
 		
-	def getSpeciesKey(self):
+	def getOrganismKey(self):
 		"""
 		# requires: nothing
 		# effects: none
-		# returns: the _Species_key associated with this object (integer). 
+		# returns: the _Organism_key associated with this object
+		#	(integer). 
 		# exceptions: none
 		"""
-		return self.specieskey
+		return self.organismkey
+
+	# method alias for backward compatability
+
+	getSpeciesKey = getOrganismKey
 
 
 class LogicalDBTable:
@@ -187,7 +200,7 @@ class LogicalDBTable:
 
 		command = string.join([
                   'select LogicalDBName=l.name, l._LogicalDB_key,',
-                  ' l.description, l._Species_key',
+                  ' l.description, l._Organism_key',
                   'from ACC_LogicalDB l',
                    ], '\n')
 		results = sql(command, 'auto')
@@ -196,9 +209,9 @@ class LogicalDBTable:
 			logicaldbname = result['LogicalDBName']
 			logicaldbkey = result['_LogicalDB_key']
 			description = result['description']
-			specieskey = result['_Species_key']
+			organismkey = result['_Organism_key']
 			ldb = LogicalDB(logicaldbname, logicaldbkey, 
-                            description, specieskey)
+                            description, organismkey)
 			self.DBbyName[logicaldbname] = ldb 
 			self.DBbyKey[logicaldbkey] = ldb 
 
@@ -499,57 +512,63 @@ class ActualDBTable:
 				return None
 
 
-	def getDBbySpecies(self, speciesKey):
+	def getDBbyOrganism(self, organismKey):
 		"""
 		# requires: _Sp
-		# effects: finds all LogicalDBs that have a matching _Species_key,
-		#          then find the appropriate ActualDB based on that LogicalDB.
+		# effects: finds all LogicalDBs that have a matching
+		#	_Organism_key, then find the appropriate ActualDB
+		#	based on that LogicalDB.
 		#
-		#          Note: there should be only one ActualDB for all 
-		#          species-specific logical databases at this time. If this
-		#          isn't the case, an exception is raised.
-		#          This method also assumes that there is only one Logical
-		#          DB for a given species.  This is done because this was 
-		#          the current behavior of MGIlink.py, for which this 
-		#          method was created.  If there is more than one logical
-		#          database for the same species, a warning is generated,
-		#          and one is chosen arbitrarily. 
+		#	Note: there should be only one ActualDB for all 
+		#	organism-specific logical databases at this time.
+		#	If this isn't the case, an exception is raised.
+		#
+		#	This method also assumes that there is only one
+		#	Logical DB for a given organism.  This is done because
+		#	this was the current behavior of MGIlink.py, for which
+		#	this method was created.  If there is more than one
+		#	logical database for the same organism, a warning is
+		#	generated, and one is chosen arbitrarily. 
 		#
 		# returns: A single ActualDB that has an associated LogicalDB
-		#          which is species specific and whose associated species 
-		#          key matches speciesKey.
-		# exceptions: NoLogicalDBforSpecies, MultLogicalDBsforSpecies
+		#	which is organism specific and whose associated
+		#	organism key matches organismKey.
+		# exceptions: NoLogicalDBforOrganism,
+		#	MultLogicalDBsforOrganism
 		"""
 
 		ldbkeys = self.logicalDBTable.dbkeys()
 		names = []
 		for ldbkey in ldbkeys:
 			ldb = self.logicalDBTable.getDBbyKey(ldbkey)
-			if ldb.getSpeciesKey() == speciesKey:
+			if ldb.getOrganismKey() == organismKey:
 				names.append(ldb.getName())
 	
 		numldbs = len(names)
 
 		if numldbs > 1:
-			raise MultLogicalDBsforSpecies, speciesKey
+			raise MultLogicalDBsforOrganism, organismKey
 		elif numldbs == 0:
-			raise NoLogicalDBforSpecies, speciesKey
+			raise NoLogicalDBforOrganism, organismKey
 
 		# numldbs == 1
 		ldbname = names[0]
 		adblist = self.getDBbyNames(ldbname)
 
 		if adblist is None:
-			raise NoActualDBforSpecies, speciesKey
+			raise NoActualDBforOrganism, organismKey
 
 		numadbs = len(adblist)
 		if numadbs > 1:
-			raise MultActualDBsforSpecies, speciesKey
+			raise MultActualDBsforOrganism, organismKey
 		elif numadbs == 0:
-			raise NoActualDBforSpecies, speciesKey
+			raise NoActualDBforOrganism, organismKey
 		else:  # numadb == 1
 			return adblist[0]
 
+	# method alias for backward compatability
+
+	getDBbySpecies = getDBbyOrganism
 
 # Functions
 # =========
