@@ -59,6 +59,9 @@ get_source( LogicalDB, Acc_ID, actualDBTable ):
 parse_id( s ):
 	Given an accession ID expression, returns a nice datastructure.
 
+split_accnum(s):
+	Given an accession ID, split it into its prefix and numeric parts.
+	Returns prefixPart (string), numericPart (int)
 
 THINGS TO DO
 
@@ -1109,6 +1112,12 @@ def simple_accnum (
     accnum = CurStringToParse[0:endnum]
     CurStringToParse = CurStringToParse[endnum:]
 
+    return (split_accnum(accnum))
+# end simple_accnum() 
+
+def split_accnum(accnum	# accession number
+    ):
+
     # set prefix to the prefix part, numeric to the numeric part
 
     matchpre = regex.compile( "^\(\(.*[^0-9]\)?\)\([0-9]*\)")
@@ -1118,17 +1127,17 @@ def simple_accnum (
 				# [^0-9]  non-digit
 				# \(.*[^0-9]\)? optional prefix
 				# \([0-9]*\)  optional numeric part
-    matchpre.match( accnum)
+    matchpre.match(accnum)
     prefix = matchpre.group(1)
     numeric = matchpre.group(3)
+
     if (numeric != ""):			# have a none null numeric part
         numeric = string.atoi( numeric)	# convert it to int
     else:				# have a null numeric part
         numeric = None
-    ##
     
     return (prefix, numeric)
-# end find_simple_accnum() 
+# end split_accnum()
 
 def tail ( vallist	# list of numeric parts and range pairs seen so far.
     ):
