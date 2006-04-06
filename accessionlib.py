@@ -82,7 +82,7 @@ defaults that are in the db module.
 import sys
 import os
 import string
-import regsub
+import re
 import regex
 import types
 import db 
@@ -640,14 +640,10 @@ def get_source( LogicalDB, Acc_ID, actualDBTable):
 			if url is None:
 				html = adbname
 			elif delimiter is None:
-				url = regsub.sub( '@@@@', Acc_ID[0], url )
+				url = re.sub('@@@@', Acc_ID[0], url)
 				html = '<A HREF="%s">%s</A>' % (url, adbname)
 			else:
-				url = regsub.sub(
-					'@@@@',
-					string.joinfields(Acc_ID, delimiter),
-					url,
-					)
+				url = re.sub('@@@@', string.joinfields(Acc_ID, delimiter), url)
 				html = '<A HREF="%s">%s</A>' % (url, adbname)
 		links.append( html )
 	s = string.joinfields( links, ', ' )
@@ -778,7 +774,7 @@ def get_Object_key( accID, MGIType=None, _MGIType_key=None ):
 	#
 	"""
 	command = 'select distinct _Object_key\n' \
-		+ 'from Acc_View\n' \
+		+ 'from ACC_View\n' \
 		+ 'where accID="%s"\n' % accID
 
 	if MGIType is not None:
@@ -855,8 +851,8 @@ def build_sql( search, table=None ):
 						(pre, sets[0]) )
 		elif len(sets) > 1:
 			s = str(sets)
-			s = regsub.gsub( '\[', '(', s )
-			s = regsub.gsub( '\]', ')', s )
+			s = re.sub( '\[', '(', s )
+			s = re.sub( '\]', ')', s )
 			if prefixPart:
 				where_list.append(
 					'(%sprefixPart="%s"' % \
@@ -1074,7 +1070,7 @@ def parse_expr (s	# string, the query expression to parse
     retval = {}		# return value, assume no errors, start w/ empty dict
 
     # set single_accnum_exprs[] to list of individual separated exprs from s
-    single_accnum_exprs = regsub.split( s, "[ 	,]*")
+    single_accnum_exprs = re.split( s, "[ 	,]*")
 
     for sae in single_accnum_exprs:		# for each single_accnum_expr
 	CurStringToParse = sae
