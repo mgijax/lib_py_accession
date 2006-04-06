@@ -1,3 +1,9 @@
+TAG: lib_py_accession-1-0-2
+DATE: 04/06/2006
+STAFF: lec
+CHANGES:
+1) converted regsub to re (Python 2.4.2)
+
 TAG: lib_py_accession-tr6594-BP
 DATE: 3/16/2006
 STAFF: dbm
