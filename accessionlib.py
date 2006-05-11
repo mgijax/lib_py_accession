@@ -1070,7 +1070,7 @@ def parse_expr (s	# string, the query expression to parse
     retval = {}		# return value, assume no errors, start w/ empty dict
 
     # set single_accnum_exprs[] to list of individual separated exprs from s
-    single_accnum_exprs = re.split( s, "[ 	,]*")
+    single_accnum_exprs = string.split( s, "[ 	,]*")
 
     for sae in single_accnum_exprs:		# for each single_accnum_expr
 	CurStringToParse = sae
