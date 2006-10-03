@@ -83,7 +83,6 @@ import sys
 import os
 import string
 import re
-import regex
 import types
 import db 
 
@@ -1110,14 +1109,17 @@ def simple_accnum (
     #   a "."!)
     #
     thelen = len(CurStringToParse)
-    firstplus   = regex.search( "\+", CurStringToParse);  # find the first "+"
-    if (firstplus == -1):		# no plus found
+
+    firstplus_re = re.search( "\+", CurStringToParse);  # find the first "+"
+
+    if (firstplus_re is None):		# no plus found
         firstplus = thelen +1
     
     endnum = firstplus			# assume "+" is before any ".."s
     
-    firstdotdot = regex.search( "\.\.", CurStringToParse);  # find first ".."
-    if (firstdotdot == -1):		# no ".." found
+    firstdotdot_re = re.search( "\.\.", CurStringToParse);  # find first ".."
+
+    if (firstdotdot_re is None):	# no ".." found
         firstdotdot = thelen +1
     
     if (firstdotdot < endnum):		# ".." before "+"
@@ -1135,16 +1137,17 @@ def split_accnum(accnum	# accession number
 
     # set prefix to the prefix part, numeric to the numeric part
 
-    matchpre = regex.compile( "^\(\(.*[^0-9]\)?\)\([0-9]*\)")
+    matchpre = re.compile( "^((.*[^0-9])?)([0-9]*)")
 				# group(1) = prefix (or "")
 				# group(3) = numeric part (or "")
 				# .*      anything
 				# [^0-9]  non-digit
 				# \(.*[^0-9]\)? optional prefix
 				# \([0-9]*\)  optional numeric part
-    matchpre.match(accnum)
-    prefix = matchpre.group(1)
-    numeric = matchpre.group(3)
+
+    match_result = matchpre.match(accnum)
+    prefix = match_result.group(1)
+    numeric = match_result.group(3)
 
     if (numeric != ""):			# have a none null numeric part
         numeric = string.atoi( numeric)	# convert it to int
@@ -1238,11 +1241,13 @@ def number (
 
     global CurStringToParse
 
-    numregex = regex.compile( "^\([0-9]+\)" )
-    if ( numregex.match(CurStringToParse) == -1 ):	# num not found!
+    numre = re.compile( "^([0-9]+)" )
+    numre_result = numre.match(CurStringToParse)
+
+    if ( numre_result is None ):	# num not found!
         return (DefaultErrorMsg)
     else:						# num found
-	numstr = numregex.group( 1 )
+	numstr = numre_result.group( 1 )
 	CurStringToParse = CurStringToParse[ len(numstr):]
         return (string.atoi( numstr))
 # end number() 
