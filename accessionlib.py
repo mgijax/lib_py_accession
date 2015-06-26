@@ -86,7 +86,6 @@ import re
 import types
 import db 
 
-
 # Shorthand
 # =========
 sql = db.sql		# by default, we use the db library to execute SQL
@@ -682,9 +681,9 @@ def get_links(_Object_key, MGIType=None, LogicalDB=None, view='Acc_View',
 		command = command + ' and preferred=%d\n' % preferred
 
 	if MGIType is not None:
-		command = command + 'and MGIType="%s"\n' % MGIType
+		command = command + 'and MGIType=\'%s\'\n' % MGIType
 	if LogicalDB is not None:
-		command = command + 'and LogicalDB="%s"\n' % LogicalDB
+		command = command + 'and LogicalDB=\'%s\'\n' % LogicalDB
 	results = sql(command, 'auto')
 
 	logicalDBTable, actualDBTable = get_LogicalActualDBTables()
@@ -743,10 +742,10 @@ def get_Accession_key(_Object_key, MGIType=None, LogicalDB=None,
 		+ 'where _Object_key=%d\n' % _Object_key
 
 	if MGIType is not None:
-		command = command + 'and MGIType="%s"\n' % MGIType
+		command = command + 'and MGIType=\'%s\'\n' % MGIType
 
 	if LogicalDB is not None:
-		command = command + 'and LogicalDB="%s"\n' % LogicalDB
+		command = command + 'and LogicalDB=\'%s\'\n' % LogicalDB
 
 	results = sql(command, 'auto')
 
@@ -774,10 +773,10 @@ def get_Object_key( accID, MGIType=None, _MGIType_key=None ):
 	"""
 	command = 'select distinct _Object_key\n' \
 		+ 'from ACC_View\n' \
-		+ 'where accID="%s"\n' % accID
+		+ 'where accID=\'%s\'\n' % accID
 
 	if MGIType is not None:
-		command = command + ' and MGIType="%s"\n' % MGIType
+		command = command + ' and MGIType=\'%s\'\n' % MGIType
 	elif _MGIType_key is not None:
 		command = command + ' and _MGIType_key=%d\n' % _MGIType_key
 
@@ -807,7 +806,7 @@ def build_sql( search, table=None ):
 	#
 	#	Given search='J:1000' and table='a', build_sql returns:
 	#
-	#		'a.prefixPart="J:" and a.numericPart=1000'
+	#		'a.prefixPart=\'J:\' and a.numericPart=1000'
 	#
 	"""
 
@@ -833,13 +832,13 @@ def build_sql( search, table=None ):
 				ranges.append(numericPart)
 		if len(sets) == 0:
 			where_list.append(
-				'(%sprefixPart="%s"' % \
+				'(%sprefixPart=\'%s\'' % \
 					(pre, prefixPart) \
 				+ ' and %snumericPart is null)' % pre)
 		elif len(sets) == 1:
 			if prefixPart:
 				where_list.append(
-					'(%sprefixPart="%s"' % \
+					'(%sprefixPart=\'%s\'' % \
 						(pre, prefixPart) \
 					+ ' and %snumericPart=%s)' % \
 						(pre, sets[0]) )
@@ -854,7 +853,7 @@ def build_sql( search, table=None ):
 			s = re.sub( '\]', ')', s )
 			if prefixPart:
 				where_list.append(
-					'(%sprefixPart="%s"' % \
+					'(%sprefixPart=\'%s\'' % \
 					(pre, prefixPart) \
 					+ ' and %snumericPart in %s)' % \
 					(pre, s) )
@@ -867,7 +866,7 @@ def build_sql( search, table=None ):
 		for range in ranges:
 			if prefixPart:
 				where_list.append(
-					'(%sprefixPart="%s"' % \
+					'(%sprefixPart=\'%s\'' % \
 						(pre, prefixPart) \
 					+ ' and %snumericPart' % pre \
 					+ ' between %d and %d)' % range)
@@ -893,7 +892,7 @@ def get_MGIType_key( MGIType ):
 	"""
 	command = 'select _MGIType_key\n' \
 		+ 'from ACC_MGIType\n' \
-		+ 'where name="%s"\n' % MGIType
+		+ 'where name=\'%s\'\n' % MGIType
 
 	results = sql(command, 'auto')
 	if results:
@@ -913,7 +912,7 @@ def get_LogicalDB_key( LogicalDB ):
 	"""
 	command = 'select _LogicalDB_key\n' \
 		+ 'from ACC_LogicalDB\n' \
-		+ 'where name="%s"\n' % LogicalDB
+		+ 'where name=\'%s\'\n' % LogicalDB
 
 	results = sql(command, 'auto')
 	if results:
