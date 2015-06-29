@@ -196,20 +196,15 @@ class LogicalDBTable:
 		self.DBbyName = {}
 		self.DBbyKey = {}
 
-		command = string.join([
-                  'select LogicalDBName=l.name, l._LogicalDB_key,',
-                  ' l.description, l._Organism_key',
-                  'from ACC_LogicalDB l',
-                   ], '\n')
+		command = 'select name, _LogicalDB_key, description, _Organism_key from ACC_LogicalDB'
 		results = sql(command, 'auto')
 
 		for result in results:
-			logicaldbname = result['LogicalDBName']
+			logicaldbname = result['name']
 			logicaldbkey = result['_LogicalDB_key']
 			description = result['description']
 			organismkey = result['_Organism_key']
-			ldb = LogicalDB(logicaldbname, logicaldbkey, 
-                            description, organismkey)
+			ldb = LogicalDB(logicaldbname, logicaldbkey, description, organismkey)
 			self.DBbyName[logicaldbname] = ldb 
 			self.DBbyKey[logicaldbkey] = ldb 
 
@@ -423,15 +418,11 @@ class ActualDBTable:
 		# returns: nothing
 		# exceptions: SQL exceptions
 		"""
-		command = string.join([
-                  'select ActualDBName=name, _ActualDB_key,',
-                  ' _LogicalDB_key, active, url, allowsMultiple, delimiter',
-                  'from ACC_ActualDB',
-                   ], '\n')
+		command = 'select name, _ActualDB_key, _LogicalDB_key, active, url, allowsMultiple, delimiter from ACC_ActualDB'
 		results = sql(command, 'auto')
 			
 		for result in results:
-			actualdbname = result['ActualDBName']
+			actualdbname = result['name']
 			actualdbkey = result['_ActualDB_key']
 			logicaldbkey = result['_LogicalDB_key']
 			active = result['active']
@@ -673,17 +664,17 @@ def get_links(_Object_key, MGIType=None, LogicalDB=None, view='Acc_View',
 	#		altogether.
 	#
 	"""
-	command = 'select accID, LogicalDB, private\n' \
-		+ 'from %s\n' % view \
-		+ 'where _Object_key=%d\n' % _Object_key
+	command = 'select accID, LogicalDB, private from %s where _Object_key = %d\n' % (view, _Object_key)
 
 	if preferred is not None:
-		command = command + ' and preferred=%d\n' % preferred
+		command = command + 'and preferred = %d\n' % preferred
 
 	if MGIType is not None:
-		command = command + 'and MGIType=\'%s\'\n' % MGIType
+		command = command + 'and MGIType = \'%s\'\n' % MGIType
+
 	if LogicalDB is not None:
-		command = command + 'and LogicalDB=\'%s\'\n' % LogicalDB
+		command = command + 'and LogicalDB = \'%s\'\n' % LogicalDB
+
 	results = sql(command, 'auto')
 
 	logicalDBTable, actualDBTable = get_LogicalActualDBTables()
@@ -738,14 +729,13 @@ def get_Accession_key(_Object_key, MGIType=None, LogicalDB=None,
 	#	view -- The view/table to use.
 	#
         """
-	command = 'select _Accession_key from %s\n' % view \
-		+ 'where _Object_key=%d\n' % _Object_key
+	command = 'select _Accession_key from %s where _Object_key = %d\n' % (view, _Object_key)
 
 	if MGIType is not None:
-		command = command + 'and MGIType=\'%s\'\n' % MGIType
+		command = command + 'and MGIType = \'%s\'\n' % MGIType
 
 	if LogicalDB is not None:
-		command = command + 'and LogicalDB=\'%s\'\n' % LogicalDB
+		command = command + 'and LogicalDB = \'%s\'\n' % LogicalDB
 
 	results = sql(command, 'auto')
 
@@ -771,14 +761,12 @@ def get_Object_key( accID, MGIType=None, _MGIType_key=None ):
 	#		can pass this instead.  Not recommended.  (integer)
 	#
 	"""
-	command = 'select distinct _Object_key\n' \
-		+ 'from ACC_View\n' \
-		+ 'where accID=\'%s\'\n' % accID
+	command = 'select distinct _Object_key from ACC_View where accID = \'%s\'\n' % (accID)
 
 	if MGIType is not None:
-		command = command + ' and MGIType=\'%s\'\n' % MGIType
+		command = command + 'and MGIType = \'%s\'\n' % (MGIType)
 	elif _MGIType_key is not None:
-		command = command + ' and _MGIType_key=%d\n' % _MGIType_key
+		command = command + 'and _MGIType_key = %d\n' % (_MGIType_key)
 
 	results = sql(command, 'auto')
 
@@ -890,9 +878,7 @@ def get_MGIType_key( MGIType ):
 	#		'Segment'...)
 	#
 	"""
-	command = 'select _MGIType_key\n' \
-		+ 'from ACC_MGIType\n' \
-		+ 'where name=\'%s\'\n' % MGIType
+	command = 'select _MGIType_key from ACC_MGIType where name = \'%s\'' % (MGIType)
 
 	results = sql(command, 'auto')
 	if results:
@@ -910,9 +896,7 @@ def get_LogicalDB_key( LogicalDB ):
 	#	LogicalDB -- A string representing the LogicalDB('MGI',
 	#		'Sequence DB'...)
 	"""
-	command = 'select _LogicalDB_key\n' \
-		+ 'from ACC_LogicalDB\n' \
-		+ 'where name=\'%s\'\n' % LogicalDB
+	command = 'select _LogicalDB_key from ACC_LogicalDB where name = \'%s\'' % (LogicalDB)
 
 	results = sql(command, 'auto')
 	if results:
@@ -932,9 +916,7 @@ def get_MGIType( _MGIType_key ):
 	#	_MGIType_key -- An integer.
 	#
 	"""
-	command = 'select name\n' \
-		+ 'from ACC_MGIType\n' \
-		+ 'where _MGIType_key=%d\n' % _MGIType_key
+	command = 'select name from ACC_MGIType where _MGIType_key = %d' % (_MGIType_key)
 
 	results = sql(command, 'auto')
 	if results:
@@ -956,9 +938,7 @@ def get_LogicalDB( _LogicalDB_key ):
 	#
 	"""
 
-	command = 'select name\n' \
-		+ 'from ACC_LogicalDB\n' \
-		+ 'where _LogicalDB_key=%d\n' % _LogicalDB_key
+	command = 'select name from ACC_LogicalDB where _LogicalDB_key = %d' % (_LogicalDB_key)
 
 	results = sql(command, 'auto')
 	if results:
