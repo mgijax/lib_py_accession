@@ -246,7 +246,7 @@ class LogicalDBTable:
 		# requires: 
 		#    LogicalDBKey: key/identifier of the LogicalDB (integer).
 		# effects: finds LogicalDB object by key/identifier (ACC_LogicalDB's 
-        #          _LogicalDB_key).
+        	#          _LogicalDB_key).
 		# returns: the LogicalDB object, or None if one with key LogicalDBKey
 		#          couldn't be found.
 		# exceptions: none.
@@ -298,14 +298,14 @@ class ActualDB:
 		#    logicaldbname: name of the LogicalDB this ActualDB is associated 
 		#                   with (string).
 		#    logicaldbkey: primary key/identifier of the LogicalDB this ActualDB
-        #                  is associated with (integer).
+        	#                  is associated with (integer).
 		#    active: integer (1|0).  Indicates whether actualdb is logically
 		#            enabled or not. 
 		#    url: Uniform Resource Locator for this ActualDB.
 		#    allowsMultiple: integer (1|0). Indicates whether URL target CGI
 		#         will accept multiple arguments in a single query.
 		#    delimiter: if allowsMultiple is true, a character used to delimit
-        #               the multiple CGI arguments (string), or None.
+        	#               the multiple CGI arguments (string), or None.
 		# effects: initializes object with provided parameters. 
 		# exceptions: none
 		"""
@@ -461,7 +461,7 @@ class ActualDBTable:
 		#          empty.
 		#
 		#          If both keys are provided, a single ActualDB object is 
-        #          returned.
+        	#          returned.
 		#
 		#          If no match exists, None is returned.
 		# returns: a list of ActualDB objects | an empty list | None	
