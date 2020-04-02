@@ -1225,7 +1225,7 @@ def number (
     else:						# num found
         numstr = numre_result.group( 1 )
         CurStringToParse = CurStringToParse[ len(numstr):]
-        return (str.atoi( numstr))
+        return (int(numstr))
 # end number() 
 
 #
