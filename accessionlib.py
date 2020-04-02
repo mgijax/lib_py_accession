@@ -1,4 +1,3 @@
-
 """
 accessionlib.py - Utilities for handling accession IDs.
  
@@ -60,7 +59,7 @@ parse_id( s ):
 
 split_accnum(s):
         Given an accession ID, split it into its prefix and numeric parts.
-        Returns prefixPart (str., numericPart (int)
+        Returns prefixPart (numericPart (int)
 
 THINGS TO DO
 
@@ -80,7 +79,6 @@ defaults that are in the db module.
 
 import sys
 import os
-import string
 import re
 import types
 import db 
@@ -1128,7 +1126,7 @@ def split_accnum(accnum	# accession number
     numeric = match_result.group(3)
 
     if (numeric != ""):			# have a none null numeric part
-        numeric = str.atoi( numeric)	# convert it to int
+        numeric = int(numeric)	# convert it to int
     else:				# have a null numeric part
         numeric = None
     
