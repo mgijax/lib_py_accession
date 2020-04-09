@@ -1168,7 +1168,7 @@ def range_tail ( vallist # list of numeric parts and range pairs seen so far.
     CurStringToParse = CurStringToParse[2:]
 
     secondnumber = number()
-    if (type(secondnumber) == bytes):	# number() found error
+    if (type(secondnumber) == str):	# number() found error
         return ("Error: Invalid accession ID range.")
 
     firstnumber  = vallist[-1]
@@ -1197,7 +1197,7 @@ def plus_tail ( vallist # list of numeric parts and range pairs seen so far.
 
     CurStringToParse = CurStringToParse[1:]
     thenumber = number()
-    if (type(thenumber) == bytes):	# number() found error
+    if (type(thenumber) == str):	# number() found error
         return (DefaultErrorMsg)
     vallist.append( thenumber)
     
